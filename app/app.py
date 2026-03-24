@@ -1,5 +1,5 @@
 from fastapi import FastAPI,HTTPException
-
+# from app.schemas import PostCreate
 
 app = FastAPI()
 
@@ -46,12 +46,15 @@ def fetch(limit:int=None):
 
 
 
-# we can createt the post using the body or by sending the request
-@app.post("/createpost")
-def createpost():
+# # we can createt the post using the body or by sending the request
+# @app.post("/createpost")
+# def createpost(post: PostCreate):
+#     new_post={"title":post.title,"content":post.content}
+#     # because we are using the pydantic model the api knows that we are sending the request
+#     text_post[int(max(text_post.keys(),key=int))+1]=new_post
+#     return new_post
 
-
- 
+# #  here we have created an endpoint
 
 
 
