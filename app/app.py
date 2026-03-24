@@ -51,7 +51,7 @@ def fetch(limit:int=None):
 def createpost(post: PostCreate):
     new_post={"title":post.title,"content":post.content}
     # because we are using the pydantic model the api knows that we are sending the request
-    text_post[max(text_post.keys(),key=int)+1]=new_post
+    text_post[max(text_post.keys())+1]=new_post
     return new_post
 
 #  here we have created an endpoint
