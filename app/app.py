@@ -1,14 +1,23 @@
 from fastapi import FastAPI,HTTPException
-from app.schemas import PostCreate
+from app.schemas import PostCreate,Response
+from app.db import create_db_and_tables,get_async_session,Post
+from sqlalchemy.ext.asyncio import AsyncSession
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    await create_db_and_tables()
+    yield
+    # here we can write the code for closing the database connection
+
+app = FastAPI(lifespan=lifespan )
 
 # @app.get("/hello")
 # def hello():
 #     return {"message": "hello kashish"}
  
 text_post={
-    "name":"kashish","identity":{"adhar":True,"pan":True},
+    
     1:"hello kashish ",
     2:"how are you",
     3:"fine",
@@ -29,7 +38,7 @@ def get_all_posts():
 
 # learning about the path parameter
 @app.get("/posts/{id}")
-def get_post_by_id(id : int):
+def get_post_by_id(id : int) ->Response:
     if id not in text_post:
         raise HTTPException(status_code=404,detail="id not found")
     
@@ -48,13 +57,20 @@ def fetch(limit:int=None):
 
 # we can createt the post using the body or by sending the request
 @app.post("/createpost")
-def createpost(post: PostCreate):
+def createpost(post: PostCreate) -> Response:
     new_post={"title":post.title,"content":post.content}
     # because we are using the pydantic model the api knows that we are sending the request
     text_post[max(text_post.keys())+1]=new_post
     return new_post
 
 #  here we have created an endpoint
+# for deleting the data
+@app.delete("/deletepost/{id}")
+def delete_post(id:int):
+    if id not in text_post:
+        raise HTTPException(status_code=404,detail="id not found")
+    del text_post[id]
+    return {"message":f"post with id {id} has been deleted"}
 
 
 
